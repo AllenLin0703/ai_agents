@@ -1,0 +1,1833 @@
+schema_version: 1.0.0
+name: history_person_life
+id: 7621355440610197539
+description: "基于该历史人物生成一生的简介"
+mode: workflow
+icon: plugin_icon/workflow.png
+nodes:
+    - id: "100001"
+      type: start
+      title: 开始
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Start-v2.jpg
+      description: "工作流的起始节点，用于设定启动工作流需要的信息"
+      position:
+        x: 1.134185303514377
+        y: -13
+      parameters:
+        node_outputs:
+            input:
+                type: string
+                value: null
+    - id: "900001"
+      type: end
+      title: 结束
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-End-v2.jpg
+      description: "工作流的最终节点，用于返回工作流运行后的结果信息"
+      position:
+        x: 7241.721009740948
+        y: -154.01106663421893
+      parameters:
+        node_inputs:
+            - name: output
+              input:
+                type: string
+                value:
+                    path: draft_id
+                    ref_node: "110596"
+        terminatePlan: returnVariables
+    - id: "104990"
+      type: llm
+      title: 大模型生成文案
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-LLM-v2.jpg
+      description: "调用大语言模型,使用变量和提示词生成回复"
+      version: "3"
+      position:
+        x: 408.929712460064
+        y: -52
+      parameters:
+        fcParamVar:
+            knowledgeFCParam: {}
+        llmParam:
+            - name: apiMode
+              input:
+                type: integer
+                value: "0"
+            - name: temperature
+              input:
+                type: float
+                value: "0.5"
+            - name: topP
+              input:
+                type: float
+                value: "1"
+            - name: frequencyPenalty
+              input:
+                type: float
+                value: "0"
+            - name: maxTokens
+              input:
+                type: integer
+                value: "4096"
+            - name: spCurrentTime
+              input:
+                type: boolean
+                value: false
+            - name: spAntiLeak
+              input:
+                type: boolean
+                value: false
+            - name: thinkingType
+              input:
+                type: string
+                value: enabled
+            - name: responseFormat
+              input:
+                type: integer
+                value: "2"
+            - name: modelName
+              input:
+                type: string
+                value: 豆包·1.8·深度思考
+            - name: modelType
+              input:
+                type: integer
+                value: "1768187121"
+            - name: generationDiversity
+              input:
+                type: string
+                value: balance
+            - name: parameters
+              input:
+                type: object
+                properties:
+                    max_completion_tokens:
+                        type: integer
+                        value: "0"
+                    reasoning_effort:
+                        type: string
+                        value: medium
+                value: null
+            - name: prompt
+              input:
+                type: string
+                value: '{{input}}'
+            - name: enableChatHistory
+              input:
+                type: boolean
+                value: false
+            - name: chatHistoryRound
+              input:
+                type: integer
+                value: "3"
+            - name: systemPrompt
+              input:
+                type: string
+                value: "# 角色\n你是一位熟悉世界历史人物生平的叙事专家，擅长以简洁、明确且具有画面感的方式，呈现历史人物从出生到逝世的关键经历。你能够从可靠的历史资料中筛选核心事件，并以时间顺序展示人物的人生轨迹。\n\n## 技能\n### 技能 1：叙述历史人物的一生\n1. 当用户查询某位历史人物时，你需要参考权威资料（如历史类网站、百科、通识性书籍）。\n2. 提炼该人物一生中最关键的阶段，包括政治活动、军事行动、思想贡献、主要挫折等。\n3. 使用编年体，以时间为线索简要描述其代表性事件，使人物一生的脉络清晰可视化。\n\n=== 示例格式（示意用） ===\n[人物姓名]于[出生年份]出生于[出生地]。\n[某年龄]，[事件或阶段描述 1]。\n[某年龄]，[事件或阶段描述 2]。\n……\n[逝世时年龄]，[逝世相关描述]。\n并简要说明其历史意义或留下的影响。\n=== 示例结束 ===\n\n### 技能 2：生成标题\n根据人物一生的主题特点，为其生成一个简短的标题，如：  \n- “拿破仑的帝国之路”  \n- “莎士比亚的创作生涯”\n\n### 技能 3：以 JSON 输出\n最终输出以 JSON 结构呈现：\n{\n    \"content\": \"历史人物的生平概述\",\n    \"title\": \"总结标题\"\n}\n\n## 文本案例（示意风格展示）\n1769 年，拿破仑出生于科西嘉岛。\n9 岁，被送往法国本土学习军事。\n24 岁，在土伦战役中崭露头角，被视为新星。\n30 岁，在国内政变中掌握实权，成为第一执政。\n35 岁，加冕为皇帝，将法国推向鼎盛时期。\n45 岁，于滑铁卢战败后被流放至圣赫勒拿岛。\n51 岁去世，后世将其视为影响欧洲格局的重要人物。\n\n## 限制\n- 仅展示6个最为关键的事迹。\n- 只回答与该人物相关的内容，其他内容一律拒绝。\n- 所有叙述必须按时间顺序排列。\n- 信息需来自可靠来源，可在文中适当注明（如：资料来源：[网站/书籍]）。\n- 内容保持简洁凝练，不用复杂长句。\n- 场景描述注重叙事性与历史氛围，而非冲突与刺激性的细节。"
+            - name: stableSystemPrompt
+              input:
+                type: string
+                value: ""
+            - name: canContinue
+              input:
+                type: boolean
+                value: false
+            - name: loopPromptVersion
+              input:
+                type: string
+                value: ""
+            - name: loopPromptName
+              input:
+                type: string
+                value: ""
+            - name: loopPromptId
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: input
+              input:
+                value:
+                    path: input
+                    ref_node: "100001"
+        node_outputs:
+            context:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+            reasoning_content:
+                type: string
+                value: null
+            title:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "124872"
+      type: llm
+      title: 生成图片大模型
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-LLM-v2.jpg
+      description: "调用大语言模型,使用变量和提示词生成回复"
+      version: "3"
+      position:
+        x: 920.916316032364
+        y: -52
+      parameters:
+        fcParamVar:
+            knowledgeFCParam: {}
+        llmParam:
+            - name: apiMode
+              input:
+                type: integer
+                value: "0"
+            - name: temperature
+              input:
+                type: float
+                value: "0.5"
+            - name: topP
+              input:
+                type: float
+                value: "1"
+            - name: frequencyPenalty
+              input:
+                type: float
+                value: "0"
+            - name: maxTokens
+              input:
+                type: integer
+                value: "4096"
+            - name: spCurrentTime
+              input:
+                type: boolean
+                value: false
+            - name: spAntiLeak
+              input:
+                type: boolean
+                value: false
+            - name: thinkingType
+              input:
+                type: string
+                value: enabled
+            - name: responseFormat
+              input:
+                type: integer
+                value: "2"
+            - name: modelName
+              input:
+                type: string
+                value: 豆包·2.0·pro
+            - name: modelType
+              input:
+                type: integer
+                value: "1772700462"
+            - name: generationDiversity
+              input:
+                type: string
+                value: balance
+            - name: parameters
+              input:
+                type: object
+                properties:
+                    max_completion_tokens:
+                        type: integer
+                        value: "0"
+                    reasoning_effort:
+                        type: string
+                        value: medium
+                value: null
+            - name: prompt
+              input:
+                type: string
+                value: '{{prompt}} 历史古代风格，超高清晰度，强烈对比'
+            - name: enableChatHistory
+              input:
+                type: boolean
+                value: false
+            - name: chatHistoryRound
+              input:
+                type: integer
+                value: "3"
+            - name: systemPrompt
+              input:
+                type: string
+                value: |-
+                    # 角色
+                    你是一位擅长将历史场景具像化的叙事型绘画提示词创作者。你能够从历史素材中提炼关键信息，并将其转换为适合AI绘画的视觉化描述词。在接收到历史人物的故事片段与年龄信息后，你需要构建生动、具体、具有画面感的绘画提示词。
+
+                    ## 技能
+
+                    ### 技能 1：生成可绘制的历史人物描述词
+                    1. 根据输入的历史故事与人物年龄，分析故事中的视觉元素，包括人物外貌特征、年代服饰、环境氛围、姿态动作、表情情绪等，并结合人物年龄特征进行整合。
+                    2. 使用清晰、具象、易被AI绘制理解的语言，将这些元素组织成流畅的描述词，从而使AI能够准确构图。
+                    3. 所生成的描述词需完整呈现场景的核心内容，突出人物在该年龄阶段的状态与故事情境。
+
+                    === 示例 ===
+                    35岁的朱元璋身穿华贵的金色甲胄，头戴红缨武盔，骑在一匹高大、肌肉线条分明的黑马背上，右手握着长枪，神情坚定；身后是随风猎猎作响的军旗与排列整齐的士兵，远方隐约可见烟雾弥漫的战场。
+                    === 示例结束 ===
+
+                    ## 案例机制
+                    - 若故事中出现婴儿角色，必须包含"一个坐着正在啼哭的婴儿"这一要素。
+
+                    示例：
+                    输入："1162年，铁木真出生于蒙古草原。"
+
+                    输出示例：
+                    一个被厚实兽皮包裹的婴儿坐在蒙古包内的毛毯上，正在啼哭的婴儿，周围散放着具有草原民族特色的马鞍、弓袋等物品；婴儿黑发浓密、脸庞圆润，蒙古包外是一望无际的草地与成群的牧畜。
+
+                    ## 限制
+                    - 输入数组与输出数组的数量必须保持一致（请注意这个限制要着重检查，经常会出错）。
+                    - 描述词只基于提供的历史故事与年龄信息，不回应其他无关内容。
+                    - 输出内容需简洁、具体、强调可绘画性，不冗长。
+                    - 描述需忠实于故事背景与人物年龄特点。
+                    - 场景刻画注重叙事氛围，弱化"破碎感""残缺感"等元素，强调历史场景的"叙事"元素而不是"冲突"元素。
+                    - 生成的描述词需排除所有可能涉及敏感信息的元素（如血腥、暴力、低俗、政治敏感、宗教争议、过度暴露服饰等），确保内容符合公序良俗与法律法规，不生成可能引起不适或违规的视觉描述。
+            - name: stableSystemPrompt
+              input:
+                type: string
+                value: ""
+            - name: canContinue
+              input:
+                type: boolean
+                value: false
+            - name: loopPromptVersion
+              input:
+                type: string
+                value: ""
+            - name: loopPromptName
+              input:
+                type: string
+                value: ""
+            - name: loopPromptId
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: prompt
+              input:
+                value:
+                    path: context
+                    ref_node: "104990"
+        node_outputs:
+            image_context:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+            reasoning_content:
+                type: string
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "191385"
+      type: batch
+      title: 批处理生成图片
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Batch-v2.jpg
+      description: "通过设定批量运行次数和逻辑，运行批处理体内的任务"
+      position:
+        x: 1396.3388643877947
+        y: -26
+      canvas_position:
+        x: 1396.3388643877947
+        y: 794.5527038459229
+      parameters:
+        batchSize:
+            type: integer
+            value:
+                content: 100
+                rawMeta:
+                    type: 2
+                type: literal
+        concurrentSize:
+            type: integer
+            value:
+                content: 2
+                rawMeta:
+                    type: 2
+                type: literal
+        node_inputs:
+            - name: input
+              input:
+                value:
+                    path: image_context
+                    ref_node: "124872"
+        node_outputs:
+            output:
+                value:
+                    type: image
+                    items:
+                        type: string
+                        value: null
+                    value:
+                        path: data
+                        ref_node: "193765"
+      nodes:
+        - id: "193765"
+          type: image_generate
+          title: 图像生成
+          icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-ImageGeneration-v2.jpg
+          description: "通过文字描述/添加参考图生成图片"
+          position:
+            x: 0
+            y: 100
+          parameters:
+            modelSetting:
+                custom_ratio:
+                    height: 1024
+                    ratio_type: fixed
+                    resolution: 1K
+                    width: 1024
+                ddim_steps: 25
+                guidance_scale: 2.5
+                max_images: 1
+                model: 1
+                watermark: true
+            node_inputs:
+                - name: input
+                  input:
+                    type: string
+                    value:
+                        path: input
+                        ref_node: "191385"
+            node_outputs:
+                data:
+                    type: image
+                    value: null
+                msg:
+                    type: string
+                    value: null
+            prompt:
+                negative_prompt: ""
+                prompt: '{{input}} 历史风格，超高清，强烈对比'
+            references: []
+            settingOnError:
+                processType: 1
+                retryTimes: 0
+                timeoutMs: 600000
+        - id: "199553"
+          type: condition
+          title: 选择器
+          icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Condition-v2.jpg
+          description: "连接多个下游分支，若设定的条件成立则仅运行对应的分支，若均不成立则只运行“否则”分支"
+          position:
+            x: 526.0277526640116
+            y: 126.00000000000011
+          parameters:
+            branches:
+                - condition:
+                    conditions:
+                        - left:
+                            input:
+                                value:
+                                    path: data
+                                    ref_node: "193765"
+                          operator: 9
+                    logic: 2
+        - id: "1306247"
+          type: image_generate
+          title: 图像生成_1
+          icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-ImageGeneration-v2.jpg
+          description: "通过文字描述/添加参考图生成图片"
+          position:
+            x: 1110.9791843433402
+            y: 126.00000000000011
+          parameters:
+            modelSetting:
+                custom_ratio:
+                    height: 1024
+                    ratio_type: fixed
+                    resolution: 1K
+                    width: 1024
+                ddim_steps: 25
+                guidance_scale: 2.5
+                max_images: 1
+                model: 1
+                watermark: true
+            node_inputs:
+                - name: input
+                  input:
+                    type: string
+                    value:
+                        path: input
+                        ref_node: "191385"
+            node_outputs:
+                data:
+                    type: image
+                    value: null
+                msg:
+                    type: string
+                    value: null
+            prompt:
+                negative_prompt: ""
+                prompt: '{{input}} 历史风格，超高清，强烈对比'
+            references: []
+            settingOnError:
+                processType: 1
+                retryTimes: 0
+                timeoutMs: 600000
+      edges:
+        - source_node: "191385"
+          target_node: "193765"
+          source_port: batch-function-inline-output
+        - source_node: "193765"
+          target_node: "199553"
+        - source_node: "199553"
+          target_node: "191385"
+          source_port: "false"
+          target_port: batch-function-inline-input
+        - source_node: "199553"
+          target_node: "1306247"
+          source_port: "true"
+        - source_node: "1306247"
+          target_node: "191385"
+          target_port: batch-function-inline-input
+    - id: "185280"
+      type: code
+      title: 图片格式转化
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Code-v2.jpg
+      description: "编写代码，处理输入变量来生成返回值"
+      version: v2
+      position:
+        x: 2029.9202018492847
+        y: -26
+      parameters:
+        code: "# 在这里，您可以通过 'args'  获取节点中的输入变量，并通过 'ret' 输出结果\n# 'args' 已经被正确地注入到环境中\n# 下面是一个示例，首先获取节点的全部输入参数params，其次获取其中参数名为'input'的值：\n# params = args.params; \n# input = params['input'];\n# 下面是一个示例，输出一个包含多种数据类型的 'ret' 对象：\n# ret: Output =  { \"name\": '小明', \"hobbies\": [\"看书\", \"旅游\"] };\n\nasync def main(args):\n    # 获取传入的两个数组参数\n    params = args.get(\"params\", {})\n    images = params.get(\"images\", [])\n    beiyong = params.get(\"beiyong\", [])\n\n    # 创建结果列表，初始为 images 的副本\n    result = list(images)\n\n    # 过滤出 beiyong 中非空且非空白字符串的有效项\n    valid_beiyong_items = [item.strip() for item in beiyong if isinstance(item, str) and item.strip() != \"\"]\n\n    # 用 beiyong 中的有效项填充 images 中的空项（空字符串或 None）\n    beiyong_index = 0\n    for i in range(len(result)):\n        item = result[i]\n        if item is None or (isinstance(item, str) and item.strip() == \"\"):\n            if beiyong_index < len(valid_beiyong_items):\n                result[i] = valid_beiyong_items[beiyong_index]\n                beiyong_index += 1\n\n    # 将剩余的 beiyong 有效项追加到 result 末尾\n    while beiyong_index < len(valid_beiyong_items):\n        result.append(valid_beiyong_items[beiyong_index])\n        beiyong_index += 1\n\n    # 去重 & URL 标准化处理\n    processed_result = []\n    seen_urls = set()\n\n    for item in result:\n        if not isinstance(item, str) or not item.strip():\n            continue\n        url = item.strip()\n\n        # 特殊处理：若为 URL 且含查询参数 '?'，截取问号前部分，并确保末尾有 '/'\n        if url.startswith((\"http://\", \"https://\")) and \"?\" in url:\n            url = url.split(\"?\", 1)[0]\n            if not url.endswith(\"/\"):\n                url += \"/\"\n\n        if url not in seen_urls:\n            seen_urls.add(url)\n            processed_result.append(url)\n\n    # （可选）调试日志\n    print(\"原始images数组:\", images)\n    print(\"原始beiyong数组:\", beiyong)\n    print(\"处理后的结果:\", processed_result)\n\n    return {\n        \"KEYS\": processed_result\n    }\n\n\n"
+        language: 3
+        node_inputs:
+            - name: images
+              input:
+                type: list
+                items:
+                    type: image
+                    value: null
+                value:
+                    path: output
+                    ref_node: "191385"
+        node_outputs:
+            KEYS:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 60000
+    - id: "110874"
+      type: batch
+      title: 生成视频提示词
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Batch-v2.jpg
+      description: "通过设定批量运行次数和逻辑，运行批处理体内的任务"
+      position:
+        x: 2623.7707602082
+        y: -26
+      canvas_position:
+        x: 2657.884878813542
+        y: 228.5285071691469
+      parameters:
+        batchSize:
+            type: integer
+            value:
+                content: 100
+                rawMeta:
+                    type: 2
+                type: literal
+        concurrentSize:
+            type: integer
+            value:
+                content: 3
+                rawMeta:
+                    type: 2
+                type: literal
+        node_inputs:
+            - name: input
+              input:
+                value:
+                    path: image_context
+                    ref_node: "124872"
+            - name: context
+              input:
+                value:
+                    path: KEYS
+                    ref_node: "185280"
+        node_outputs:
+            output:
+                value:
+                    type: list
+                    items:
+                        type: string
+                        value: null
+                    value:
+                        path: output
+                        ref_node: "194066"
+      nodes:
+        - id: "194066"
+          type: llm
+          title: 大模型
+          icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-LLM-v2.jpg
+          description: "调用大语言模型,使用变量和提示词生成回复"
+          version: "3"
+          position:
+            x: 0
+            y: 100
+          parameters:
+            fcParamVar:
+                knowledgeFCParam: {}
+            llmParam:
+                - name: apiMode
+                  input:
+                    type: integer
+                    value: "0"
+                - name: temperature
+                  input:
+                    type: float
+                    value: "0.5"
+                - name: topP
+                  input:
+                    type: float
+                    value: "1"
+                - name: frequencyPenalty
+                  input:
+                    type: float
+                    value: "0"
+                - name: maxTokens
+                  input:
+                    type: integer
+                    value: "4096"
+                - name: spCurrentTime
+                  input:
+                    type: boolean
+                    value: false
+                - name: spAntiLeak
+                  input:
+                    type: boolean
+                    value: false
+                - name: thinkingType
+                  input:
+                    type: string
+                    value: enabled
+                - name: responseFormat
+                  input:
+                    type: integer
+                    value: "2"
+                - name: modelName
+                  input:
+                    type: string
+                    value: 豆包·2.0·pro
+                - name: modelType
+                  input:
+                    type: integer
+                    value: "1772700462"
+                - name: generationDiversity
+                  input:
+                    type: string
+                    value: balance
+                - name: parameters
+                  input:
+                    type: object
+                    properties:
+                        max_completion_tokens:
+                            type: integer
+                            value: "0"
+                        reasoning_effort:
+                            type: string
+                            value: medium
+                    value: null
+                - name: prompt
+                  input:
+                    type: string
+                    value: '{{input}}{{context}}'
+                - name: enableChatHistory
+                  input:
+                    type: boolean
+                    value: false
+                - name: chatHistoryRound
+                  input:
+                    type: integer
+                    value: "3"
+                - name: systemPrompt
+                  input:
+                    type: string
+                    value: "# 角色\n  你是一位擅长历史叙事场景设计的视频提示词专家，专注将历史人物的生平经历转化为适合视频生成模型的安全、直观和具备画面感的提示词。你熟悉不同历史时期的生活风貌，会用叙事化、温和且无害的方式呈现人物的一生。\n  \n  ## 一、核心安全准则\n  ### 1. 内容三级安全处理\n  - **第一层：直接移除禁用内容**（如暴力、血腥、危险动作）\n  - **第二层：弱化可能刺激的情绪或动作**（如“冲突”→“争论”、“战斗”→“技能展示”）\n  - **第三层：将潜在高风险场景转换为无害、可公开播放的设定**  \n    示例：  \n    “战场” → “历史研究中心的模拟演练区”  \n    “处刑” → “舞台剧排练片段”\n  \n  ### 2. 身份柔化替换表\n  | 原始身份 | 可能风险 | 可替代安全身份 |\n  |----------|----------|----------------|\n  | 士兵 | 暴力联想 | 历史活动讲解员 |\n  | 囚犯 | 社会风险 | 剧场演员 |\n  | 宗教人物 | 容易引发争议 | 文化史学研究者 |\n  \n  ## 二、场景润色策略\n  ### 1. 动作描述温和化\n  - 示例：“武士挥刀冲向对方”\n  - 处理：“表演队成员在舞台上演示古代武术动作，道具始终保持安全距离”\n  \n  ### 2. 环境安全替换\n  - “战乱城墙” → “历史主题园区的复原建筑”\n  - “监牢” → “复古风格展陈室”\n  - “废墟瓦砾” → “受保护的历史建筑遗址”\n  \n  ## 三、视觉元素安全处理\n  ### 1. 道具替代方案\n  | 原始道具 | 替代道具 | 安全说明示例 |\n  |----------|-----------|----------------|\n  | 金属武器 | 橡胶或泡沫道具 | “用于教学演示的轻质模型” |\n  | 枪械 | 彩色水枪 | “明显玩具化外观，具备儿童友好属性” |\n  | 炸药 | 礼花、烟雾机 | “用于舞台效果的庆典装置” |\n  \n  ### 2. 身体表现方式\n  - “受伤的皮肤裂开”\n  - “化妆部门使用安全颜料制作的戏剧效果”\n  \n  ## 四、文化敏感降级\n  1. **信仰相关场景**：避免仪式化表达  \n     - 替代方案：“人在古建筑中安静阅读文化资料”\n  \n  2. **民族内容**：避免刻板  \n     - 替代方案：“传统文化展示活动中参与者表演手工技艺或歌舞”\n  \n  ## 五、安全视频提示词结构模板\n  **镜头语言** + **安全化身份** + **温和动作** + **非风险场景** + **积极氛围**  \n  示例：  \n  “远景镜头下，身着朴素服饰的历史讲解员在文化园区中比划当年的战术布置，使用轻质模型展示，周围阳光柔和洒落。”\n  \n  ## 六、审核增强处理\n  - 强调“表演”“教学”“排练”“影视拍摄”属性  \n  - 加入安全说明：  \n    “本画面为专业团队指导下的示范性演示”  \n  - 使用无害比喻：  \n    “如同棋盘推演般展示人物的策略思维”\n  \n  ## 七、特殊主题的安全表达方式\n  1. **历史战争题材**  \n     → “沙盘推演”“历史研究员讲解”“模型展示区”\n  \n  2. **灾难类主题**  \n     → “应急演练现场”“模拟教学场景”\n  \n  3. **社会事件相关**  \n     → “剧组拍摄日常”“演员按照导演要求走位”\n  \n  ## 八、风险自查清单\n  1. 所有人物是否具有明确的无害身份？  \n  2. 动作是否完全可解释为教学/表演？  \n  3. 场景是否避免现实敏感地点？  \n  4. 道具是否带有“模型”“仿制”“玩具”说明？  \n  5. 完全避免具象伤害、惊悚或攻击行为？\n  \n  ## 九、替代词库\n  - “攻击” → “示范动作”\n  - “爆炸” → “舞台闪光效果”\n  - “死亡” → “人物人生阶段结束的象征性画面”\n  - “血迹” → “红色化妆颜料用于戏剧效果”\n  \n  ## 十、多层面安全确认\n  1. **词汇层面**：通过敏感词扫描  \n  2. **视觉层面**：提示词应能生成适合公开场景播放的画面  \n  3. **语境层面**：整体传递教育、文化或历史学习意义\n  \n  **最终守则：**  \n  所有生成内容必须符合“幼儿园可播放标准”，温和、积极、无害。\n  \n  ## 限制\n  - 全程围绕历史人物的一生进行创作，不涉及其他话题。  \n  - 结构清晰、逻辑明确。  \n  - 视频提示词需简洁、突出重点、便于画面生成。\n  ```"
+                - name: stableSystemPrompt
+                  input:
+                    type: string
+                    value: ""
+                - name: canContinue
+                  input:
+                    type: boolean
+                    value: false
+                - name: loopPromptVersion
+                  input:
+                    type: string
+                    value: ""
+                - name: loopPromptName
+                  input:
+                    type: string
+                    value: ""
+                - name: loopPromptId
+                  input:
+                    type: string
+                    value: ""
+            node_inputs:
+                - name: input
+                  input:
+                    type: string
+                    value:
+                        path: input
+                        ref_node: "110874"
+                - name: context
+                  input:
+                    type: string
+                    value:
+                        path: context
+                        ref_node: "110874"
+            node_outputs:
+                output:
+                    type: string
+                    value: null
+                reasoning_content:
+                    type: string
+                    value: null
+            settingOnError:
+                processType: 1
+                retryTimes: 0
+                timeoutMs: 180000
+      edges:
+        - source_node: "110874"
+          target_node: "194066"
+          source_port: batch-function-inline-output
+        - source_node: "194066"
+          target_node: "110874"
+          target_port: batch-function-inline-input
+    - id: "111459"
+      type: batch
+      title: 批处理生成视频
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Batch-v2.jpg
+      description: "通过设定批量运行次数和逻辑，运行批处理体内的任务"
+      position:
+        x: 3507.4002831708945
+        y: -165.2472024566979
+      canvas_position:
+        x: 3364.671900652779
+        y: 285.7132834645568
+      parameters:
+        batchSize:
+            type: integer
+            value:
+                content: 100
+                rawMeta:
+                    type: 2
+                type: literal
+        concurrentSize:
+            type: integer
+            value:
+                content: 2
+                rawMeta:
+                    type: 2
+                type: literal
+        node_inputs:
+            - name: input
+              input:
+                type: list
+                items:
+                    type: image
+                    value: null
+                value:
+                    path: output
+                    ref_node: "191385"
+            - name: KEYS
+              input:
+                value:
+                    path: KEYS
+                    ref_node: "185280"
+        node_outputs:
+            output:
+                value:
+                    type: video
+                    items:
+                        type: string
+                        value: null
+                    value:
+                        path: video
+                        ref_node: "167610"
+      nodes:
+        - id: "167610"
+          type: video_generation
+          title: 视频生成
+          icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-VideoGeneration.png
+          description: "通过文本描述或添加参考图生成视频，注：此节点为付费节点，具体费用可见节点文档介绍"
+          position:
+            x: 0
+            y: 100
+          parameters:
+            cameraFixed: false
+            duration: 5
+            dynamicParameters: []
+            firstFrame:
+                assistType: 2
+                type: string
+                value:
+                    content:
+                        blockID: "111459"
+                        name: KEYS
+                        source: block-output
+                    rawMeta:
+                        type: 7
+                    type: ref
+            generateAudio: true
+            generateMode: image2Video
+            model: doubao-seedance-lite
+            node_inputs:
+                - name: input
+                  input:
+                    type: image
+                    value:
+                        path: input
+                        ref_node: "111459"
+            node_outputs:
+                msg:
+                    type: string
+                    value: null
+                video:
+                    type: video
+                    value: null
+            prompt: '{{input}}'
+            ratio: adaptive
+            resolution: 480p
+            seed: -1
+            settingOnError:
+                processType: 1
+                retryTimes: 0
+                timeoutMs: 360000
+            watermark: false
+      edges:
+        - source_node: "111459"
+          target_node: "167610"
+          source_port: batch-function-inline-output
+        - source_node: "167610"
+          target_node: "111459"
+          target_port: batch-function-inline-input
+    - id: "139553"
+      type: plugin
+      title: get_url
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "提取链接"
+      position:
+        x: 3988.8247844417324
+        y: -165.2472024566979
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7523117420568117258"
+            - name: apiName
+              input:
+                type: string
+                value: "get_url"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        batch:
+            batchEnable: true
+            batchSize: 100
+            concurrentSize: 10
+            inputLists:
+                - name: item1
+                  input:
+                    type: list
+                    items:
+                        type: video
+                        value: null
+                    value:
+                        path: output
+                        ref_node: "111459"
+        node_inputs:
+            - name: output
+              input:
+                type: string
+                value:
+                    path: item1
+                    ref_node: "139553"
+        node_outputs:
+            outputList:
+                type: list
+                items:
+                    type: object
+                    properties:
+                        output:
+                            type: string
+                            value: null
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "105670"
+      type: plugin
+      title: objs_to_str_list
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "对象列表转化成字符串列表"
+      position:
+        x: 4439.377585872166
+        y: -165.2472024566979
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412878553481243"
+            - name: apiName
+              input:
+                type: string
+                value: "objs_to_str_list"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: outputs
+              input:
+                value:
+                    path: outputList
+                    ref_node: "139553"
+        node_outputs:
+            infos:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "135050"
+      type: code
+      title: 预估视频事件及数量
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Code-v2.jpg
+      description: "编写代码，处理输入变量来生成返回值"
+      version: v2
+      position:
+        x: 4913.8370485779315
+        y: -165.2472024566979
+      parameters:
+        code: "# 在这里，您可以通过 'args'  获取节点中的输入变量，并通过 'ret' 输出结果\n# 'args' 已经被正确地注入到环境中\n# 下面是一个示例，首先获取节点的全部输入参数params，其次获取其中参数名为'input'的值：\n# params = args.params; \n# input = params['input'];\n# 下面是一个示例，输出一个包含多种数据类型的 'ret' 对象：\n# ret: Output =  { \"name\": '小明', \"hobbies\": [\"看书\", \"旅游\"] };\nimport asyncio\n\nasync def main(input):\n    # 1. 尝试从不同层级结构中安全提取 video_url 参数（支持多种输入格式）\n    \n    video_url = None  # 初始化 video_url 为 None，表示尚未获取到有效值\n    \n    # 优先尝试从 input['arguments']['video_url'] 获取（常见于 LLM 工具调用参数）\n    if input.get(\"arguments\") and input[\"arguments\"].get(\"video_url\") is not None:\n        video_url = input[\"arguments\"][\"video_url\"]\n    \n    # 若上层未找到，尝试从 input 根层级直接获取（扁平传参场景）\n    elif input.get(\"video_url\") is not None:\n        video_url = input[\"video_url\"]\n    \n    # 若仍未找到，最后尝试从 input['params']['video_url'] 获取（常见于插件参数封装）\n    elif input.get(\"params\") and input[\"params\"].get(\"video_url\") is not None:\n        video_url = input[\"params\"][\"video_url\"]\n    \n    # 2. 将 video_url 统一规范化为字符串列表 video_urls（便于后续批量处理）\n    \n    # 判断 video_url 是否为列表类型\n    if isinstance(video_url, list):\n        # 若已是列表，则直接赋值（但需确保元素为字符串）\n        video_urls = [str(url).strip() for url in video_url if url is not None]\n    elif isinstance(video_url, str) and video_url.strip():\n        # 若是单个非空字符串，则包装成单元素列表\n        video_urls = [video_url.strip()]\n    else:\n        # 其他情况（None、空字符串、数字0等）视为空列表\n        video_urls = []\n    \n    # 3. 统计有效视频 URL 的数量\n    num = len(video_urls)  # 直接获取列表长度，即视频个数\n    \n    # 4. 估算总处理时长（单位：微秒 μs）\n    # 示例策略：每个视频预估处理 5 秒 → 5 * 1_000_000 = 5_000_000 微秒\n    # 注意：Coze 等平台的 duration 字段通常要求以「微秒」为单位\n    duration = num * 5_000_000  # 5秒/视频 × 数量 → 总耗时（微秒）\n    \n    # （可选增强）可在此处补充 URL 校验或去重，例如：\n    # video_urls = list(dict.fromkeys(video_urls))  # 保留顺序去重\n    # num = len(video_urls)\n    # duration = num * 5_000_000\n    \n    # 5. 返回标准化结果字典（供下游节点使用）\n    # 请根据插件定义确认字段名：若插件输出参数名为 'KEYS'，则需调整 key\n    return {\n        \"duration\": duration,  # 预估总处理时间（微秒）\n        \"num\": num             # 有效视频数量\n    }"
+        language: 3
+        node_inputs:
+            - name: video_url
+              input:
+                value:
+                    path: outputList
+                    ref_node: "139553"
+        node_outputs:
+            duration:
+                type: integer
+                value: null
+            num:
+                type: integer
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 60000
+    - id: "189590"
+      type: plugin
+      title: timelines
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "自定义创建时间线列表"
+      position:
+        x: 5349.878783623012
+        y: -154.01106663421893
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412878553546779"
+            - name: apiName
+              input:
+                type: string
+                value: "timelines"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: duration
+              input:
+                value:
+                    path: duration
+                    ref_node: "135050"
+            - name: num
+              input:
+                value:
+                    path: num
+                    ref_node: "135050"
+        node_outputs:
+            all_timelines:
+                type: list
+                items:
+                    type: object
+                    properties:
+                        end:
+                            type: float
+                            value: null
+                        start:
+                            type: float
+                            value: null
+                    value: null
+                value: null
+            timelines:
+                type: list
+                items:
+                    type: object
+                    properties:
+                        end:
+                            type: float
+                            value: null
+                        start:
+                            type: float
+                            value: null
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "198989"
+      type: plugin
+      title: video_infos
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "根据时间线制作视频数据"
+      position:
+        x: 5841.225804469045
+        y: -154.01106663421893
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412878553563163"
+            - name: apiName
+              input:
+                type: string
+                value: "video_infos"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: timelines
+              input:
+                value:
+                    path: timelines
+                    ref_node: "189590"
+            - name: video_urls
+              input:
+                value:
+                    path: infos
+                    ref_node: "105670"
+        node_outputs:
+            infos:
+                type: string
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "143448"
+      type: plugin
+      title: 制作字幕
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "根据时间线制作字幕数据\n"
+      position:
+        x: 5841.225804469045
+        y: 97.63566441496715
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412867740745737"
+            - name: apiName
+              input:
+                type: string
+                value: "caption_infos"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: texts
+              input:
+                value:
+                    path: context
+                    ref_node: "104990"
+            - name: timelines
+              input:
+                value:
+                    path: timelines
+                    ref_node: "189590"
+        node_outputs:
+            infos:
+                type: string
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "1243443"
+      type: plugin
+      title: 标题
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "根据时间线制作字幕数据\n"
+      position:
+        x: 5841.225804469044
+        y: 361.5578457592355
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412867740745737"
+            - name: apiName
+              input:
+                type: string
+                value: "caption_infos"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: texts
+              input:
+                value:
+                    path: title
+                    ref_node: "104990"
+            - name: timelines
+              input:
+                value:
+                    path: timelines
+                    ref_node: "189590"
+        node_outputs:
+            infos:
+                type: string
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "119446"
+      type: plugin
+      title: str_to_list(配置背景音乐）
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "字符转列表"
+      position:
+        x: 5841.225804469044
+        y: 596.6397862911406
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412878553530395"
+            - name: apiName
+              input:
+                type: string
+                value: "str_to_list"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: obj
+              input:
+                type: string
+                value: "https://github.com/ZhishenLin/video_bgm/blob/main/soundgallerydt-chinese-china-music-175674.mp3"
+        node_outputs:
+            infos:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "148598"
+      type: plugin
+      title: audio_infos（制作音频）
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "根据时间线制作音频数据"
+      position:
+        x: 5841.225804469044
+        y: 846.7507994360658
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412867740712969"
+            - name: apiName
+              input:
+                type: string
+                value: "audio_infos"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: mp3_urls
+              input:
+                value:
+                    path: infos
+                    ref_node: "119446"
+            - name: timelines
+              input:
+                value:
+                    path: all_timelines
+                    ref_node: "189590"
+        node_outputs:
+            infos:
+                type: string
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "195678"
+      type: plugin
+      title: create_draft（创建草稿）
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "创建草稿"
+      position:
+        x: 6453.641149220688
+        y: 846.7507994360658
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412867740762121"
+            - name: apiName
+              input:
+                type: string
+                value: "create_draft"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: height
+              input:
+                type: integer
+                value: 1920
+            - name: width
+              input:
+                type: integer
+                value: 1080
+        node_outputs:
+            draft_id:
+                type: string
+                value: null
+                description: 草稿ID
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "191931"
+      type: plugin
+      title: add_videos（添加视频）
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "批量添加视频"
+      position:
+        x: 6453.641149220688
+        y: 589.3271038718019
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412867740696585"
+            - name: apiName
+              input:
+                type: string
+                value: "add_videos"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: draft_id
+              input:
+                value:
+                    path: draft_id
+                    ref_node: "195678"
+            - name: video_infos
+              input:
+                value:
+                    path: infos
+                    ref_node: "198989"
+        node_outputs:
+            draft_id:
+                type: string
+                value: null
+                description: 草稿ID
+            segment_ids:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+                description: segment_ids
+            segment_infos:
+                type: list
+                items:
+                    type: object
+                    properties:
+                        end:
+                            type: integer
+                            value: null
+                        id:
+                            type: string
+                            value: null
+                        start:
+                            type: integer
+                            value: null
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "189514"
+      type: plugin
+      title: add_captions（添加字幕）
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "批量添加字幕"
+      position:
+        x: 6453.641149220688
+        y: 361.5578457592355
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412867740598281"
+            - name: apiName
+              input:
+                type: string
+                value: "add_captions"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: captions
+              input:
+                value:
+                    path: infos
+                    ref_node: "143448"
+            - name: draft_id
+              input:
+                value:
+                    path: draft_id
+                    ref_node: "195678"
+            - name: border_color
+              input:
+                type: string
+                value: "#000000"
+            - name: font
+              input:
+                type: string
+                value: "江湖体"
+            - name: font_size
+              input:
+                type: integer
+                value: 12
+            - name: line_spacing
+              input:
+                type: float
+                value: 10
+            - name: text_color
+              input:
+                type: string
+                value: "#ffde00"
+            - name: transform_y
+              input:
+                type: float
+                value: -794
+        node_outputs:
+            draft_id:
+                type: string
+                value: null
+                description: 草稿ID
+            message:
+                type: string
+                value: null
+                description: 信息
+            segment_ids:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+            segment_infos:
+                type: list
+                items:
+                    type: object
+                    properties:
+                        end:
+                            type: integer
+                            value: null
+                        id:
+                            type: string
+                            value: null
+                        start:
+                            type: integer
+                            value: null
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "133822"
+      type: plugin
+      title: add_captions（添加标题）
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "批量添加字幕"
+      position:
+        x: 6461.34448689052
+        y: 97.63566441496715
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412867740598281"
+            - name: apiName
+              input:
+                type: string
+                value: "add_captions"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: captions
+              input:
+                value:
+                    path: infos
+                    ref_node: "1243443"
+            - name: draft_id
+              input:
+                value:
+                    path: draft_id
+                    ref_node: "195678"
+            - name: border_color
+              input:
+                type: string
+                value: "#000000"
+            - name: font
+              input:
+                type: string
+                value: "江湖体"
+            - name: font_size
+              input:
+                type: integer
+                value: 15
+            - name: line_spacing
+              input:
+                type: float
+                value: 10
+            - name: text_color
+              input:
+                type: string
+                value: "#ffffff"
+            - name: transform_y
+              input:
+                type: float
+                value: 1369
+        node_outputs:
+            draft_id:
+                type: string
+                value: null
+                description: 草稿ID
+            message:
+                type: string
+                value: null
+                description: 信息
+            segment_ids:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+            segment_infos:
+                type: list
+                items:
+                    type: object
+                    properties:
+                        end:
+                            type: integer
+                            value: null
+                        id:
+                            type: string
+                            value: null
+                        start:
+                            type: integer
+                            value: null
+                    value: null
+                value: null
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+    - id: "110596"
+      type: plugin
+      title: add_audios（添加音频）
+      icon: https://lf3-static.bytednsdoc.com/obj/eden-cn/dvsmryvd_avi_dvsm/ljhwZthlaukjlkulzlp/icon/icon-Plugin-v2.jpg
+      description: "批量添加音频"
+      position:
+        x: 6453.641149220688
+        y: -154.01106663421893
+      parameters:
+        apiParam:
+            - name: apiID
+              input:
+                type: string
+                value: "7522412867740581897"
+            - name: apiName
+              input:
+                type: string
+                value: "add_audios"
+            - name: pluginID
+              input:
+                type: string
+                value: "7522412867740565513"
+            - name: pluginName
+              input:
+                type: string
+                value: "剪映小助手"
+            - name: pluginVersion
+              input:
+                type: string
+                value: ""
+            - name: tips
+              input:
+                type: string
+                value: ""
+            - name: outDocLink
+              input:
+                type: string
+                value: ""
+        node_inputs:
+            - name: audio_infos
+              input:
+                value:
+                    path: infos
+                    ref_node: "148598"
+            - name: draft_id
+              input:
+                value:
+                    path: draft_id
+                    ref_node: "195678"
+        node_outputs:
+            audio_ids:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+                description: 音频ID列表
+            draft_id:
+                type: string
+                value: null
+                description: 草稿ID
+            message:
+                type: string
+                value: null
+                description: 信息
+            segment_ids:
+                type: list
+                items:
+                    type: string
+                    value: null
+                value: null
+            segment_infos:
+                type: list
+                items:
+                    type: object
+                    properties:
+                        end:
+                            type: integer
+                            value: null
+                        id:
+                            type: string
+                            value: null
+                        start:
+                            type: integer
+                            value: null
+                    value: null
+                value: null
+            track_id:
+                type: string
+                value: null
+                description: track_id
+        settingOnError:
+            processType: 1
+            retryTimes: 0
+            timeoutMs: 180000
+edges:
+    - source_node: "100001"
+      target_node: "104990"
+    - source_node: "110596"
+      target_node: "900001"
+    - source_node: "104990"
+      target_node: "124872"
+    - source_node: "124872"
+      target_node: "191385"
+    - source_node: "191385"
+      target_node: "185280"
+      source_port: batch-output
+    - source_node: "185280"
+      target_node: "110874"
+    - source_node: "110874"
+      target_node: "111459"
+      source_port: batch-output
+    - source_node: "111459"
+      target_node: "139553"
+      source_port: batch-output
+    - source_node: "139553"
+      target_node: "105670"
+    - source_node: "105670"
+      target_node: "135050"
+    - source_node: "135050"
+      target_node: "189590"
+    - source_node: "189590"
+      target_node: "198989"
+    - source_node: "198989"
+      target_node: "143448"
+    - source_node: "143448"
+      target_node: "1243443"
+    - source_node: "1243443"
+      target_node: "119446"
+    - source_node: "119446"
+      target_node: "148598"
+    - source_node: "148598"
+      target_node: "195678"
+    - source_node: "195678"
+      target_node: "191931"
+    - source_node: "191931"
+      target_node: "189514"
+    - source_node: "189514"
+      target_node: "133822"
+    - source_node: "133822"
+      target_node: "110596"
