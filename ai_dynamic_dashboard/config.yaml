@@ -1,0 +1,17 @@
+# Dynamic Dashboard v1 MVP 配置
+anthropic_api_key: ""   # 也可用环境变量 ANTHROPIC_API_KEY
+
+github:
+  repo: "anthropics/claude-code"  # 监控的 GitHub 仓库
+
+alerts:
+  github_stars_per_hour: 50       # 每小时新增 star 超过此值触发告警
+  cpu_percent: 90                 # CPU 使用率告警阈值
+  memory_percent: 85              # 内存使用率告警阈值
+
+discord:
+  webhook_url: ""                 # 填入你的 Discord Webhook URL（为空则跳过告警）
+
+dashboard:
+  output_file: "dashboard.html"
+  model: "claude-opus-4-6"        # 各 sub-agent 使用的模型
